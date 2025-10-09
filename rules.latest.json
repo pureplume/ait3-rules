@@ -16,6 +16,27 @@
     "cell_title_field": "MATRIX_CELL_NAME",
     "z_flag_field": "Z_FLAG"
   },
+  "entity_routing": {
+    "source_field_candidates": ["corp_ind", "Corp_Ind", "ENTITY_TYPE"],
+    "value_map": {
+      "Y": "corporate",
+      "1": "corporate",
+      "法人": "corporate",
+      "CORP": "corporate",
+      "C": "corporate",
+      "N": "natural",
+      "0": "natural",
+      "自然人": "natural",
+      "INDV": "natural",
+      "I": "natural"
+    },
+    "output_field": "ENTITY_TYPE",
+    "writeback": true,
+    "route_to": {
+      "natural": "natural",
+      "corporate": "corporate"
+    }
+  },
   "matrix": {
     "cut": {
       "R": { "hi": 70, "mid": 40 },
@@ -46,9 +67,19 @@
         "score": {
           "type": "categorical_map",
           "mapping": {
-            "01": 1.0, "02": 1.0, "05": 1.0, "06": 1.0, "07": 1.0,
-            "03": 0.6, "04": 0.6, "12": 0.6, "13": 0.6,
-            "08": 0.3, "09": 0.3, "10": 0.3, "11": 0.3
+            "01": 1.0,
+            "02": 1.0,
+            "05": 1.0,
+            "06": 1.0,
+            "07": 1.0,
+            "03": 0.6,
+            "04": 0.6,
+            "12": 0.6,
+            "13": 0.6,
+            "08": 0.3,
+            "09": 0.3,
+            "10": 0.3,
+            "11": 0.3
           },
           "unknown_default": 0.5,
           "target": "R"
@@ -94,9 +125,26 @@
           "bins": [[3000000, 1.0], [1000000, 0.7], [600000, 0.4], [0, 0.2]],
           "currency": "TWD",
           "categorical_override": {
-            "00": 0.2, "0": 0.2, "01": 0.2, "1": 0.2, "02": 0.2, "2": 0.2,
-            "03": 0.4, "3": 0.4, "04": 0.4, "4": 0.4, "05": 0.7, "5": 0.7,
-            "06": 0.7, "6": 0.7, "07": 1.0, "7": 1.0, "08": 1.0, "8": 1.0, "09": 1.0, "9": 1.0
+            "00": 0.2,
+            "0": 0.2,
+            "01": 0.2,
+            "1": 0.2,
+            "02": 0.2,
+            "2": 0.2,
+            "03": 0.4,
+            "3": 0.4,
+            "04": 0.4,
+            "4": 0.4,
+            "05": 0.7,
+            "5": 0.7,
+            "06": 0.7,
+            "6": 0.7,
+            "07": 1.0,
+            "7": 1.0,
+            "08": 1.0,
+            "8": 1.0,
+            "09": 1.0,
+            "9": 1.0
           },
           "unknown_default": 0.2,
           "target": "R"
@@ -134,9 +182,9 @@
           "delimiter_regex": "[,、，/；;\\s]+",
           "normalize_fullwidth": true,
           "dedupe": true,
-          "whitelist_labels": ["台幣存款","台幣授信","外幣存款","外幣授信","信用卡","信託/基金","保管箱","債券","保險"],
+          "whitelist_labels": ["台幣存款", "台幣授信", "外幣存款", "外幣授信", "信用卡", "信託/基金", "保管箱", "債券", "保險"],
           "use_count_only": true,
-          "steps_by_count": [[5,1.0],[4,0.8],[3,0.5],[2,0.3],[1,0.0]],
+          "steps_by_count": [[5, 1.0], [4, 0.8], [3, 0.5], [2, 0.3], [1, 0.0]],
           "target": "R"
         }
       },
@@ -163,8 +211,8 @@
         "rule_text": "上升→推薦；下降→關注；|Δ|<10萬不計分（臺幣）。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_twd": [[3000000,1.0],[1000000,0.8],[300000,0.5],[100000,0.3]],
-          "down_bins_twd": [[-3000000,1.0],[-1000000,0.8],[-300000,0.5],[-100000,0.3]],
+          "up_bins_twd": [[3000000, 1.0], [1000000, 0.8], [300000, 0.5], [100000, 0.3]],
+          "down_bins_twd": [[-3000000, 1.0], [-1000000, 0.8], [-300000, 0.5], [-100000, 0.3]],
           "no_score_below_twd": 100000,
           "target_up": "R",
           "target_down": "A",
@@ -180,7 +228,7 @@
         "rule_text": "d<90→0；90≤d<180→0.3；180≤d<270→0.5；270≤d<360→0.8；d≥360→1.0。",
         "score": {
           "type": "numeric_bins_days",
-          "ranges": [[0,90,0.0],[90,180,0.3],[180,270,0.5],[270,360,0.8],[360,null,1.0]],
+          "ranges": [[0, 90, 0.0], [90, 180, 0.3], [180, 270, 0.5], [270, 360, 0.8], [360, null, 1.0]],
           "target": "A"
         }
       },
@@ -193,8 +241,8 @@
         "rule_text": "台幣+外幣折台幣差額：上升→推薦；下降→關注；|Δ|<10萬不計分。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_twd": [[3000000,1.0],[1000000,0.8],[300000,0.5],[100000,0.3]],
-          "down_bins_twd": [[-3000000,1.0],[-1000000,0.8],[-300000,0.5],[-100000,0.3]],
+          "up_bins_twd": [[3000000, 1.0], [1000000, 0.8], [300000, 0.5], [100000, 0.3]],
+          "down_bins_twd": [[-3000000, 1.0], [-1000000, 0.8], [-300000, 0.5], [-100000, 0.3]],
           "no_score_below_twd": 100000,
           "target_up": "R",
           "target_down": "A",
@@ -204,15 +252,15 @@
       {
         "key": "loan_util_change_pp",
         "label": "放款_額度動用率差值",
-        "aliases": ["放款_額度動用率差值","diff_ln_rate"],
+        "aliases": ["放款_額度動用率差值", "diff_ln_rate"],
         "weight": { "R": 0.142857, "A": 0.166667 },
         "edw_source": { "tables": ["PMART_REGT.KPI_CUST_CORP"], "field": "CF_Loan_Limit_Use_Rate" },
-        "rule_text": "Δpp = 本月動用率 − 前月動用率（百分點）。推薦：Δpp ≥ 40 → 1.0；20–<40 → 0.8；10–<20 → 0.5；4–<10 → 0.3。關注：Δpp ≤ −40 → 1.0；−40–≤−20 → 0.8；−20–≤−10 → 0.5；−10–≤−4 → 0.3。|Δpp| < 4 不計；額度大幅變更時略過；winsor 至 ±120pp。",
+        "rule_text": "Δpp = 本月動用率 − 前月動用率（百分點）。推薦：Δpp ≥ 40 → 1.0；20–<40 → 0.8；10–<20 → 0.5；<10 → 0。關注：Δpp ≤ −40 → 1.0；−40–<−20 → 0.8；−20–<−10 → 0.5；>−10 → 0。額度大幅變更時略過；winsor 至 ±120pp。",
         "score": {
           "type": "numeric_bins_pp",
-          "bins_up": [[40, 1.0], [20, 0.8], [10, 0.5], [4, 0.3]],
-          "bins_down": [[-40, 1.0], [-20, 0.8], [-10, 0.5], [-4, 0.3]],
-          "no_score_below_pp": 4,
+          "bins_up": [[40, 1.0], [20, 0.8], [10, 0.5]],
+          "bins_down": [[-40, 1.0], [-20, 0.8], [-10, 0.5]],
+          "no_score_below_pp": 10,
           "guards": { "skip_if_limit_change_pct_over": 0.1, "winsor_abs_pp": 120 },
           "target_up": "R",
           "target_down": "A"
@@ -227,8 +275,8 @@
         "rule_text": "Δavg = (本月平均) − (上月平均)。上升→R；下降→A；|Δavg|<1 不計分。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_twd": [[3,1.0],[2,0.7],[1,0.4]],
-          "down_bins_twd": [[-3,1.0],[-2,0.7],[-1,0.4]],
+          "up_bins_twd": [[3, 1.0], [2, 0.7], [1, 0.4]],
+          "down_bins_twd": [[-3, 1.0], [-2, 0.7], [-1, 0.4]],
           "no_score_below_cnt": 1,
           "target_up": "R",
           "target_down": "A"
@@ -244,8 +292,8 @@
         "rule_text": "Δavg = (近3月月平均) − (前一段3月月平均)。上升→R；下降→A；|Δavg|<0.33 不計分。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_twd": [[2.0,1.0],[1.0,0.7],[0.33,0.4]],
-          "down_bins_twd": [[-2.0,1.0],[-1.0,0.7],[-0.33,0.4]],
+          "up_bins_twd": [[2.0, 1.0], [1.0, 0.7], [0.33, 0.4]],
+          "down_bins_twd": [[-2.0, 1.0], [-1.0, 0.7], [-0.33, 0.4]],
           "no_score_below_avg": 0.33,
           "target_up": "R",
           "target_down": "A"
@@ -261,8 +309,8 @@
         "rule_text": "Δavg = (近6月月平均) − (前一段6月月平均)。上升→R；下降→A；|Δavg|<0.5 不計分。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_twd": [[2.0,1.0],[1.0,0.7],[0.5,0.4]],
-          "down_bins_twd": [[-2.0,1.0],[-1.0,0.7],[-0.5,0.4]],
+          "up_bins_twd": [[2.0, 1.0], [1.0, 0.7], [0.5, 0.4]],
+          "down_bins_twd": [[-2.0, 1.0], [-1.0, 0.7], [-0.5, 0.4]],
           "no_score_below_avg": 0.5,
           "target_up": "R",
           "target_down": "A"
@@ -278,8 +326,8 @@
         "rule_text": "Δavg = (本月平均) − (去年同月平均)。上升→R；下降→A；|Δavg|<1 不計分。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_twd": [[3,1.0],[2,0.7],[1,0.4]],
-          "down_bins_twd": [[-3,1.0],[-2,0.7],[-1,0.4]],
+          "up_bins_twd": [[3, 1.0], [2, 0.7], [1, 0.4]],
+          "down_bins_twd": [[-3, 1.0], [-2, 0.7], [-1, 0.4]],
           "no_score_below_cnt": 1,
           "target_up": "R",
           "target_down": "A"
@@ -295,8 +343,8 @@
         "rule_text": "Δavg = (近3月月平均) − (去年同期3月月平均)。上升→R；下降→A；|Δavg|<0.33 不計分。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_twd": [[2.0,1.0],[1.0,0.7],[0.33,0.4]],
-          "down_bins_twd": [[-2.0,1.0],[-1.0,0.7],[-0.33,0.4]],
+          "up_bins_twd": [[2.0, 1.0], [1.0, 0.7], [0.33, 0.4]],
+          "down_bins_twd": [[-2.0, 1.0], [-1.0, 0.7], [-0.33, 0.4]],
           "no_score_below_avg": 0.33,
           "target_up": "R",
           "target_down": "A"
@@ -312,8 +360,8 @@
         "rule_text": "Δavg = (近6月月平均) − (去年同期6月月平均)。上升→R；下降→A；|Δavg|<0.5 不計分。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_twd": [[2.0,1.0],[1.0,0.7],[0.5,0.4]],
-          "down_bins_twd": [[-2.0,1.0],[-1.0,0.7],[-0.5,0.4]],
+          "up_bins_twd": [[2.0, 1.0], [1.0, 0.7], [0.5, 0.4]],
+          "down_bins_twd": [[-2.0, 1.0], [-1.0, 0.7], [-0.5, 0.4]],
           "no_score_below_avg": 0.5,
           "target_up": "R",
           "target_down": "A"
@@ -365,12 +413,29 @@
         "rule_text": "同欄位可為金額(台幣)或代碼00–09。金額分箱：≥300萬=1.0；100–<300萬=0.7；60–<100萬=0.4；<60萬=0.2。代碼分數：07/08/09=1.0；05/06=0.7；03/04=0.4；00/01/02=0.2。",
         "score": {
           "type": "numeric_bins_amt",
-          "bins": [[3000000,1.0],[1000000,0.7],[600000,0.4],[0,0.2]],
+          "bins": [[3000000, 1.0], [1000000, 0.7], [600000, 0.4], [0, 0.2]],
           "currency": "TWD",
           "categorical_override": {
-            "00": 0.2, "0": 0.2, "01": 0.2, "1": 0.2, "02": 0.2, "2": 0.2,
-            "03": 0.4, "3": 0.4, "04": 0.4, "4": 0.4, "05": 0.7, "5": 0.7,
-            "06": 0.7, "6": 0.7, "07": 1.0, "7": 1.0, "08": 1.0, "8": 1.0, "09": 1.0, "9": 1.0
+            "00": 0.2,
+            "0": 0.2,
+            "01": 0.2,
+            "1": 0.2,
+            "02": 0.2,
+            "2": 0.2,
+            "03": 0.4,
+            "3": 0.4,
+            "04": 0.4,
+            "4": 0.4,
+            "05": 0.7,
+            "5": 0.7,
+            "06": 0.7,
+            "6": 0.7,
+            "07": 1.0,
+            "7": 1.0,
+            "08": 1.0,
+            "8": 1.0,
+            "09": 1.0,
+            "9": 1.0
           },
           "unknown_default": 0.2,
           "target": "R"
@@ -383,7 +448,12 @@
         "weight": { "R": 0.125, "A": 0.0 },
         "edw_source": { "tables": ["AML_RISKREVIEW"], "field": "ESTABLISHED_YEARS" },
         "rule_text": "≥10年→1；5–9→0.6；3–4→0.3；<3→0。",
-        "score": { "type": "numeric_step_ge", "steps": [[10,1.0],[5,0.6],[3,0.3],[0,0.0]], "target": "R", "unit": "years" }
+        "score": {
+          "type": "numeric_step_ge",
+          "steps": [[10, 1.0], [5, 0.6], [3, 0.3], [0, 0.0]],
+          "target": "R",
+          "unit": "years"
+        }
       },
       {
         "key": "company_age",
@@ -392,7 +462,12 @@
         "weight": { "R": 0.125, "A": 0.0 },
         "edw_source": { "tables": ["AML_RISKREVIEW"], "field": "ESTABLISHED_YEARS" },
         "rule_text": "年數（year）：≥10=1.0；5≤year<10=0.6；3≤year<5=0.3；year<3=0.0。",
-        "score": { "type": "numeric_step_ge", "steps": [[10,1.0],[5,0.6],[3,0.3],[0,0.0]], "target": "R", "unit": "years" }
+        "score": {
+          "type": "numeric_step_ge",
+          "steps": [[10, 1.0], [5, 0.6], [3, 0.3], [0, 0.0]],
+          "target": "R",
+          "unit": "years"
+        }
       },
       {
         "key": "strategic_industry",
@@ -417,7 +492,7 @@
         "rule_text": "授信等級（1–12，數字越小越佳）：[1–3]→1.0；[4–6]→0.6；[7–9]→0.2；[10–12]→0.0；未知→0.0。",
         "score": {
           "type": "numeric_ranges",
-          "ranges": [[1,3,1.0],[4,6,0.6],[7,9,0.2],[10,12,0.0]],
+          "ranges": [[1, 3, 1.0], [4, 6, 0.6], [7, 9, 0.2], [10, 12, 0.0]],
           "unknown_default": 0.0,
           "target": "R"
         }
@@ -427,7 +502,11 @@
         "label": "客戶往來業務類別",
         "aliases": ["客戶往來業務類別", "cust_type_ETL"],
         "weight": { "R": 0.125, "A": 0.0 },
-        "edw_source": { "tables": ["AML_RISKSCORE_NORMAL"], "field": "cust_type_ETL", "extra_fields": { "count_field": "SCSB_BUSINESS_CNT" } },
+        "edw_source": {
+          "tables": ["AML_RISKSCORE_NORMAL"],
+          "field": "cust_type_ETL",
+          "extra_fields": { "count_field": "SCSB_BUSINESS_CNT" }
+        },
         "rule_text": "來源可為『名稱清單』或『已計數欄位』。名稱清單以 ,、，/；; 空白 分隔，正規化/去重後，僅計入九大白名單：台幣存款、台幣授信、外幣存款、外幣授信、信用卡、信託/基金、保管箱、債券、保險。最終以類別數 N 評分：≥5=1.0；4=0.8；3=0.5；2=0.3；1=0.0。",
         "score": {
           "type": "business_multi",
@@ -436,9 +515,9 @@
           "delimiter_regex": "[,、，/；;\\s]+",
           "normalize_fullwidth": true,
           "dedupe": true,
-          "whitelist_labels": ["台幣存款","台幣授信","外幣存款","外幣授信","信用卡","信託/基金","保管箱","債券","保險"],
+          "whitelist_labels": ["台幣存款", "台幣授信", "外幣存款", "外幣授信", "信用卡", "信託/基金", "保管箱", "債券", "保險"],
           "use_count_only": true,
-          "steps_by_count": [[5,1.0],[4,0.8],[3,0.5],[2,0.3],[1,0.0]],
+          "steps_by_count": [[5, 1.0], [4, 0.8], [3, 0.5], [2, 0.3], [1, 0.0]],
           "target": "R"
         }
       },
@@ -465,8 +544,8 @@
         "rule_text": "上升→推薦；下降→關注（TWD）。推薦：≥2億=1.0；8,000萬–<2億=0.8；3,000萬–<8,000萬=0.5；1,000萬–<3,000萬=0.3；300萬–<1,000萬=0.2。關注：≤−2億=1.0；−8,000萬–>−2億=0.8；−3,000萬–>−8,000萬=0.5；−1,000萬–>−3,000萬=0.3；−300萬–>−1,000萬=0.2；0～−300萬=0。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_twd": [[200000000,1.0],[80000000,0.8],[30000000,0.5],[10000000,0.3],[3000000,0.2]],
-          "down_bins_twd": [[-200000000,1.0],[-80000000,0.8],[-30000000,0.5],[-10000000,0.3],[-3000000,0.2]],
+          "up_bins_twd": [[200000000, 1.0], [80000000, 0.8], [30000000, 0.5], [10000000, 0.3], [3000000, 0.2]],
+          "down_bins_twd": [[-200000000, 1.0], [-80000000, 0.8], [-30000000, 0.5], [-10000000, 0.3], [-3000000, 0.2]],
           "down_zero_band_twd": 3000000,
           "down_zero_score": 0.0,
           "target_up": "R",
@@ -483,7 +562,7 @@
         "rule_text": "d<90→0；90≤d<180→0.3；180≤d<270→0.5；270≤d<360→0.8；d≥360→1.0。",
         "score": {
           "type": "numeric_bins_days",
-          "ranges": [[0,90,0.0],[90,180,0.3],[180,270,0.5],[270,360,0.8],[360,null,1.0]],
+          "ranges": [[0, 90, 0.0], [90, 180, 0.3], [180, 270, 0.5], [270, 360, 0.8], [360, null, 1.0]],
           "target": "A"
         }
       },
@@ -505,7 +584,12 @@
           "target_up": "R",
           "target_down": "A"
         },
-        "calc": { "months": 3, "baseline": "yoy_same_period", "aggregate": "sum", "formula": "(curr_3m_sum - ly_3m_sum) / ly_3m_sum" }
+        "calc": {
+          "months": 3,
+          "baseline": "yoy_same_period",
+          "aggregate": "sum",
+          "formula": "(curr_3m_sum - ly_3m_sum) / ly_3m_sum"
+        }
       },
       {
         "key": "eb_cnt_1m",
@@ -516,8 +600,8 @@
         "rule_text": "Δavg = 本月月均 − 上月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_cnt": [[30,1.0],[20,0.7],[10,0.4]],
-          "down_bins_cnt": [[-30,1.0],[-20,0.7],[-10,0.4]],
+          "up_bins_cnt": [[30, 1.0], [20, 0.7], [10, 0.4]],
+          "down_bins_cnt": [[-30, 1.0], [-20, 0.7], [-10, 0.4]],
           "no_score_below_avg": 10,
           "low_activity_avg_both_lt": 10,
           "target_up": "R",
@@ -534,8 +618,8 @@
         "rule_text": "Δavg = 近3月月均 − 前3月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_cnt": [[30,1.0],[20,0.7],[10,0.4]],
-          "down_bins_cnt": [[-30,1.0],[-20,0.7],[-10,0.4]],
+          "up_bins_cnt": [[30, 1.0], [20, 0.7], [10, 0.4]],
+          "down_bins_cnt": [[-30, 1.0], [-20, 0.7], [-10, 0.4]],
           "no_score_below_avg": 10,
           "low_activity_avg_both_lt": 10,
           "target_up": "R",
@@ -552,8 +636,8 @@
         "rule_text": "Δavg = 近6月月均 − 前6月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_cnt": [[30,1.0],[20,0.7],[10,0.4]],
-          "down_bins_cnt": [[-30,1.0],[-20,0.7],[-10,0.4]],
+          "up_bins_cnt": [[30, 1.0], [20, 0.7], [10, 0.4]],
+          "down_bins_cnt": [[-30, 1.0], [-20, 0.7], [-10, 0.4]],
           "no_score_below_avg": 10,
           "low_activity_avg_both_lt": 10,
           "target_up": "R",
@@ -570,8 +654,8 @@
         "rule_text": "Δavg = 本月月均 − 去年同月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_cnt": [[30,1.0],[20,0.7],[10,0.4]],
-          "down_bins_cnt": [[-30,1.0],[-20,0.7],[-10,0.4]],
+          "up_bins_cnt": [[30, 1.0], [20, 0.7], [10, 0.4]],
+          "down_bins_cnt": [[-30, 1.0], [-20, 0.7], [-10, 0.4]],
           "no_score_below_avg": 10,
           "low_activity_avg_both_lt": 10,
           "target_up": "R",
@@ -588,8 +672,8 @@
         "rule_text": "Δavg = 近3月月均 − 去年同期3月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_cnt": [[30,1.0],[20,0.7],[10,0.4]],
-          "down_bins_cnt": [[-30,1.0],[-20,0.7],[-10,0.4]],
+          "up_bins_cnt": [[30, 1.0], [20, 0.7], [10, 0.4]],
+          "down_bins_cnt": [[-30, 1.0], [-20, 0.7], [-10, 0.4]],
           "no_score_below_avg": 10,
           "low_activity_avg_both_lt": 10,
           "target_up": "R",
@@ -606,8 +690,8 @@
         "rule_text": "Δavg = 近6月月均 − 去年同期6月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_cnt": [[30,1.0],[20,0.7],[10,0.4]],
-          "down_bins_cnt": [[-30,1.0],[-20,0.7],[-10,0.4]],
+          "up_bins_cnt": [[30, 1.0], [20, 0.7], [10, 0.4]],
+          "down_bins_cnt": [[-30, 1.0], [-20, 0.7], [-10, 0.4]],
           "no_score_below_avg": 10,
           "low_activity_avg_both_lt": 10,
           "target_up": "R",
@@ -638,8 +722,8 @@
         "rule_text": "Δavg = (本期近6月『月平均』交易次數) − (去年同期6月『月平均』交易次數)。成長→R；衰退→A；|Δavg| < 10 不計分；若兩期月均皆 < 10 次/月則不計分。",
         "score": {
           "type": "numeric_bins_amt_diff",
-          "up_bins_cnt": [[30,1.0],[20,0.7],[10,0.4]],
-          "down_bins_cnt": [[-30,1.0],[-20,0.7],[-10,0.4]],
+          "up_bins_cnt": [[30, 1.0], [20, 0.7], [10, 0.4]],
+          "down_bins_cnt": [[-30, 1.0], [-20, 0.7], [-10, 0.4]],
           "no_score_below_avg": 10,
           "low_activity_avg_both_lt": 10,
           "target_up": "R",
@@ -650,14 +734,14 @@
       {
         "key": "loan_util_change_pp",
         "label": "放款_額度動用率差值",
-        "aliases": ["放款_額度動用率差值","diff_ln_rate"],
+        "aliases": ["放款_額度動用率差值", "diff_ln_rate"],
         "weight": { "R": 0.125, "A": 0.25 },
         "edw_source": { "tables": ["PMART_REGT.KPI_CUST_CORP"], "field": "CF_Loan_Limit_Use_Rate" },
-        "rule_text": "Δpp = 當期動用率 − 基準期動用率（百分點）。推薦：≥40→1.0；20–<40→0.8；10–<20→0.5；0–<10→0。關注：≤−40→1.0；−40–<−20→0.8；−20–<−10→0.5；−10–<0→0。額度大幅變更時略過；winsor 至 ±120pp。",
+        "rule_text": "Δpp = 當期動用率 − 基準期動用率（百分點）。推薦：Δpp ≥ 40 → 1.0；20–<40 → 0.8；10–<20 → 0.5；<10 → 0。關注：Δpp ≤ −40 → 1.0；−40–<−20 → 0.8；−20–<−10 → 0.5；>−10 → 0。額度大幅變更時略過；winsor 至 ±120pp。",
         "score": {
           "type": "numeric_bins_pp",
-          "bins_up": [[40,1.0],[20,0.8],[10,0.5]],
-          "bins_down": [[-40,1.0],[-20,0.8],[-10,0.5]],
+          "bins_up": [[40, 1.0], [20, 0.8], [10, 0.5]],
+          "bins_down": [[-40, 1.0], [-20, 0.8], [-10, 0.5]],
           "no_score_below_pp": 10,
           "guards": { "skip_if_limit_change_pct_over": 0.1, "winsor_abs_pp": 120 },
           "target_up": "R",
@@ -667,14 +751,14 @@
       {
         "key": "credit_util_change_pp",
         "label": "授信_額度動用率差值",
-        "aliases": ["授信_額度動用率差值","diff_cred_rate"],
+        "aliases": ["授信_額度動用率差值", "diff_cred_rate"],
         "weight": { "R": 0.125, "A": 0.25 },
         "edw_source": { "tables": ["PMART_REGT.KPI_CUST_CORP"], "field": "CF_Credit_Limit_Use_Rate" },
         "rule_text": "Δpp = 當期動用率 − 基準期動用率（百分點）。推薦：≥40→1.0；20–<40→0.8；10–<20→0.5；0–<10→0。關注：≤−40→1.0；−40–<−20→0.8；−20–<−10→0.5；−10–<0→0。額度大幅變更時略過；winsor 至 ±120pp。",
         "score": {
           "type": "numeric_bins_pp",
-          "bins_up": [[40,1.0],[20,0.8],[10,0.5]],
-          "bins_down": [[-40,1.0],[-20,0.8],[-10,0.5]],
+          "bins_up": [[40, 1.0], [20, 0.8], [10, 0.5]],
+          "bins_down": [[-40, 1.0], [-20, 0.8], [-10, 0.5]],
           "no_score_below_pp": 10,
           "guards": { "skip_if_limit_change_pct_over": 0.1, "winsor_abs_pp": 120 },
           "target_up": "R",
