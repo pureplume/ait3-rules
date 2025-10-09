@@ -38,8 +38,8 @@
     "features": [
       {
         "key": "job_title",
-        "label": "職稱（AML職業代碼）",
-        "aliases": ["職稱", "JOBTITLE1197", "職稱(AML)"],
+        "label": "AML職稱",
+        "aliases": ["AML職稱", "AML_Title_Cd"],
         "weight": { "R": 0.142857, "A": 0.0 },
         "edw_source": { "tables": ["AML_RISKRATINGCASE"], "field": "JOBTITLE1197" },
         "rule_text": "依 AML 職業代碼映射穩定性；未知給 0.5（中性）。",
@@ -57,20 +57,13 @@
       {
         "key": "wealth_aum_12m",
         "label": "財富規模",
-        "aliases": ["資產規模", "AUM", "近12月AUM"],
+        "aliases": ["財富規模", "Tot_PV_Amt", "近12月AUM"],
         "weight": { "R": 0.125, "A": 0.0 },
         "edw_source": { "tables": ["AML_*"], "field": "wealth_scale_amt" },
         "rule_text": "AML 優先，取當月 AUM 現值（已折 TWD）；分箱：≥5,000萬=1.0；3,000萬–<5,000萬=0.7；1,000萬–<3,000萬=0.4；300萬–<1,000萬=0.3；100萬–<300萬=0.2；<100萬=0.1。",
         "score": {
           "type": "numeric_bins_amt",
-          "bins": [
-            [50000000, 1.0],
-            [30000000, 0.7],
-            [10000000, 0.4],
-            [3000000, 0.3],
-            [1000000, 0.2],
-            [0, 0.1]
-          ],
+          "bins": [[50000000, 1.0], [30000000, 0.7], [10000000, 0.4], [3000000, 0.3], [1000000, 0.2], [0, 0.1]],
           "target": "R",
           "currency": "TWD"
         }
@@ -78,7 +71,7 @@
       {
         "key": "employment_tenure_years",
         "label": "任職年資",
-        "aliases": ["年資", "工作年資"],
+        "aliases": ["任職年資", "Established"],
         "weight": { "R": 0.111111, "A": 0.0 },
         "edw_source": { "tables": [], "field": "" },
         "rule_text": "年資（年）：≥10=1.0；5–9=0.6；<5=0.3；未知建議給0.5（中性）。",
@@ -92,30 +85,18 @@
       {
         "key": "annual_income",
         "label": "年薪",
-        "aliases": ["年收入", "年所得", "ANNUAL_TURNOVER_AMT"],
+        "aliases": ["年薪", "Annual"],
         "weight": { "R": 0.111111, "A": 0.0 },
         "edw_source": { "tables": ["AML_RISKREVIEW"], "field": "ANNUAL_TURNOVER_AMT" },
         "rule_text": "同一欄位可為『金額(台幣)』或『代碼00–09』。數值分箱： [0,600萬)→0.2；[60萬,100萬)→0.4；[100萬,300萬)→0.7；[300萬, +∞)→1.0。代碼分數：00/01/02=0.2；03/04=0.4；05/06=0.7；07/08/09=1.0。",
         "score": {
           "type": "numeric_bins_amt",
-          "bins": [
-            [3000000, 1.0],
-            [1000000, 0.7],
-            [600000, 0.4],
-            [0, 0.2]
-          ],
+          "bins": [[3000000, 1.0], [1000000, 0.7], [600000, 0.4], [0, 0.2]],
           "currency": "TWD",
           "categorical_override": {
-            "00": 0.2, "0": 0.2,
-            "01": 0.2, "1": 0.2,
-            "02": 0.2, "2": 0.2,
-            "03": 0.4, "3": 0.4,
-            "04": 0.4, "4": 0.4,
-            "05": 0.7, "5": 0.7,
-            "06": 0.7, "6": 0.7,
-            "07": 1.0, "7": 1.0,
-            "08": 1.0, "8": 1.0,
-            "09": 1.0, "9": 1.0
+            "00": 0.2, "0": 0.2, "01": 0.2, "1": 0.2, "02": 0.2, "2": 0.2,
+            "03": 0.4, "3": 0.4, "04": 0.4, "4": 0.4, "05": 0.7, "5": 0.7,
+            "06": 0.7, "6": 0.7, "07": 1.0, "7": 1.0, "08": 1.0, "8": 1.0, "09": 1.0, "9": 1.0
           },
           "unknown_default": 0.2,
           "target": "R"
@@ -123,18 +104,14 @@
       },
       {
         "key": "education_level",
-        "label": "最高學歷(ETL)",
-        "aliases": ["最高學歷", "EDU_CD", "學歷"],
+        "label": "學歷",
+        "aliases": ["學歷", "Edu"],
         "weight": { "R": 0.1, "A": 0.0 },
         "edw_source": { "tables": ["PARTY"], "field": "EDU_CD" },
         "rule_text": "僅三類：博士/碩士=1.0；大學/大專=0.6；高中及以下=0.3；未知建議0.5。",
         "score": {
           "type": "categorical_map",
-          "mapping": {
-            "博士/碩士": 1.0,
-            "大學/大專": 0.6,
-            "高中及以下": 0.3
-          },
+          "mapping": { "博士/碩士": 1.0, "大學/大專": 0.6, "高中及以下": 0.3 },
           "unknown_default": 0.5,
           "target": "R"
         }
@@ -142,7 +119,7 @@
       {
         "key": "product_diversity_score",
         "label": "客戶往來業務類別",
-        "aliases": ["往來業務大類數", "SCSB_BUSINESS"],
+        "aliases": ["客戶往來業務類別", "cust_type_ETL"],
         "weight": { "R": 0.090909, "A": 0.0 },
         "edw_source": {
           "tables": ["AML_RISKSCORE_NORMAL"],
@@ -157,10 +134,7 @@
           "delimiter_regex": "[,、，/；;\\s]+",
           "normalize_fullwidth": true,
           "dedupe": true,
-          "whitelist_labels": [
-            "台幣存款","台幣授信","外幣存款","外幣授信",
-            "信用卡","信託/基金","保管箱","債券","保險"
-          ],
+          "whitelist_labels": ["台幣存款","台幣授信","外幣存款","外幣授信","信用卡","信託/基金","保管箱","債券","保險"],
           "use_count_only": true,
           "steps_by_count": [[5,1.0],[4,0.8],[3,0.5],[2,0.3],[1,0.0]],
           "target": "R"
@@ -169,19 +143,13 @@
       {
         "key": "avg_balance_6m",
         "label": "月均存款",
-        "aliases": ["近6月平均存款", "M6AVGBAL"],
+        "aliases": ["月均存款", "Acu_avg_m6"],
         "weight": { "R": 0.090909, "A": 0.0 },
         "edw_source": { "tables": ["AML_RISKSCORE_NORMAL"], "field": "M6AVGBAL" },
         "rule_text": "近6月平均存款（TWD）：≥300萬=1.0；100–<300萬=0.7；30–<100萬=0.4；10–<30萬=0.3；<10萬=0.0。",
         "score": {
           "type": "numeric_bins_amt",
-          "bins": [
-            [3000000, 1.0],
-            [1000000, 0.7],
-            [300000, 0.4],
-            [100000, 0.3],
-            [0, 0.0]
-          ],
+          "bins": [[3000000, 1.0], [1000000, 0.7], [300000, 0.4], [100000, 0.3], [0, 0.0]],
           "target": "R",
           "currency": "TWD"
         }
@@ -189,7 +157,7 @@
       {
         "key": "avg_balance_qoq_change",
         "label": "與前季月均存款差額",
-        "aliases": ["活存餘額季變化（差額）", "M6AVGAMT", "月均存款QoQ差額"],
+        "aliases": ["與前季月均存款差額", "diff_M6_Avg_Amt"],
         "weight": { "R": 0.142857, "A": 0.166667 },
         "edw_source": { "tables": ["AML_RISKSCORE_NORMAL"], "field": "M6AVGAMT" },
         "rule_text": "上升→推薦；下降→關注；|Δ|<10萬不計分（臺幣）。",
@@ -206,7 +174,7 @@
       {
         "key": "days_since_last_txn",
         "label": "最近一次交易距今天數",
-        "aliases": ["距上次交易天數", "LAST_TXDATE", "最近存款距今天數"],
+        "aliases": ["最近一次交易距今天數", "diff_txn_day"],
         "weight": { "R": 0.0, "A": 0.166667 },
         "edw_source": { "tables": ["AML_RISKRATINGCASE"], "field": "LAST_TXDATE" },
         "rule_text": "d<90→0；90≤d<180→0.3；180≤d<270→0.5；270≤d<360→0.8；d≥360→1.0。",
@@ -218,8 +186,8 @@
       },
       {
         "key": "time_deposit_change",
-        "label": "定存增減變化",
-        "aliases": ["定存餘額年變化（差額）", "TD_TWD_FCY_BAL", "定存變化金額"],
+        "label": "本期與去年底定存差額",
+        "aliases": ["本期與去年底定存差額", "diff_TD_bal"],
         "weight": { "R": 0.142857, "A": 0.166667 },
         "edw_source": { "tables": ["AML_ACCT_DEPOSIT"], "field": "TD_TWD_FCY_BAL" },
         "rule_text": "台幣+外幣折台幣差額：上升→推薦；下降→關注；|Δ|<10萬不計分。",
@@ -235,8 +203,8 @@
       },
       {
         "key": "loan_util_change_pp",
-        "label": "個金放款_額度動用率（當月較前月，pp）",
-        "aliases": ["個金放款_額度動用率","放款額度動用率變化","放款動用率變化","Loan Util MoM (pp)","CF_Loan_Limit_Use_Rate Δpp"],
+        "label": "放款_額度動用率差值",
+        "aliases": ["放款_額度動用率差值","diff_ln_rate"],
         "weight": { "R": 0.142857, "A": 0.166667 },
         "edw_source": { "tables": ["PMART_REGT.KPI_CUST_CORP"], "field": "CF_Loan_Limit_Use_Rate" },
         "rule_text": "Δpp = 本月動用率 − 前月動用率（百分點）。推薦：Δpp ≥ 40 → 1.0；20–<40 → 0.8；10–<20 → 0.5；4–<10 → 0.3。關注：Δpp ≤ −40 → 1.0；−40–≤−20 → 0.8；−20–≤−10 → 0.5；−10–≤−4 → 0.3。|Δpp| < 4 不計；額度大幅變更時略過；winsor 至 ±120pp。",
@@ -252,8 +220,8 @@
       },
       {
         "key": "eb_cnt_1m",
-        "label": "數位互動次數(近1個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_1M", "近1月登入數"],
+        "label": "近1M登入次數",
+        "aliases": ["近1M登入次數", "L1M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI"], "field": "EB_LOGIN_CNT_1M" },
         "rule_text": "Δavg = (本月平均) − (上月平均)。上升→R；下降→A；|Δavg|<1 不計分。",
@@ -269,8 +237,8 @@
       },
       {
         "key": "eb_cnt_3m",
-        "label": "數位互動次數(近3個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_3M", "近3月登入數"],
+        "label": "近3M登入次數",
+        "aliases": ["近3M登入次數", "L3M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI"], "field": "EB_LOGIN_CNT_3M" },
         "rule_text": "Δavg = (近3月月平均) − (前一段3月月平均)。上升→R；下降→A；|Δavg|<0.33 不計分。",
@@ -286,8 +254,8 @@
       },
       {
         "key": "eb_cnt_6m",
-        "label": "數位互動次數(近6個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_6M", "近6月登入數"],
+        "label": "近6M登入次數",
+        "aliases": ["近6M登入次數", "L6M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI"], "field": "EB_LOGIN_CNT_6M" },
         "rule_text": "Δavg = (近6月月平均) − (前一段6月月平均)。上升→R；下降→A；|Δavg|<0.5 不計分。",
@@ -303,8 +271,8 @@
       },
       {
         "key": "eb_cnt_ly1",
-        "label": "數位互動次數(去年同期1個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_LY1M", "去年同期1月登入數"],
+        "label": "去年同期 近1M登入次數",
+        "aliases": ["去年同期 近1M登入次數", "LY_L1M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI"], "field": "EB_LOGIN_CNT_LY1M" },
         "rule_text": "Δavg = (本月平均) − (去年同月平均)。上升→R；下降→A；|Δavg|<1 不計分。",
@@ -320,8 +288,8 @@
       },
       {
         "key": "eb_cnt_ly3",
-        "label": "數位互動次數(去年同期3個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_LY3M", "去年同期3月登入數"],
+        "label": "去年同期 近3M登入次數",
+        "aliases": ["去年同期 近3M登入次數", "LY_L3M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI"], "field": "EB_LOGIN_CNT_LY3M" },
         "rule_text": "Δavg = (近3月月平均) − (去年同期3月月平均)。上升→R；下降→A；|Δavg|<0.33 不計分。",
@@ -337,8 +305,8 @@
       },
       {
         "key": "eb_cnt_ly6",
-        "label": "數位互動次數(去年同期6個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_LY6M", "去年同期6月登入數"],
+        "label": "去年同期 近6M登入次數",
+        "aliases": ["去年同期 近6M登入次數", "LY_L6M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI"], "field": "EB_LOGIN_CNT_LY6M" },
         "rule_text": "Δavg = (近6月月平均) − (去年同期6月月平均)。上升→R；下降→A；|Δavg|<0.5 不計分。",
@@ -354,8 +322,8 @@
       },
       {
         "key": "txn_freq_delta_3m",
-        "label": "交易頻率差額",
-        "aliases": ["M6AVGCNT", "交易頻率變化(半年)"],
+        "label": "交易頻率",
+        "aliases": ["交易頻率", "M6_Avg_Cnt_ETL"],
         "weight": 0,
         "edw_source": { "tables": ["AML_RISKSCORE_NORMAL"], "field": "M6AVGCNT" },
         "rule_text": "資料保留（不計分）。",
@@ -363,8 +331,8 @@
       },
       {
         "key": "edd_uncooperative",
-        "label": "不配合\\n盡職審查",
-        "aliases": ["不配合盡職審查", "UNCOOPERATIVE_FLAG"],
+        "label": "不配合盡職審查",
+        "aliases": ["不配合盡職審查", "New_RMK03_ETL"],
         "weight": { "R": 0.0, "A": 0.166667 },
         "edw_source": { "tables": ["AML_RISKSCORE_NORMAL"], "field": "UNCOOPERATIVE_FLAG" },
         "rule_text": "Y=1；N=0（關注用；必要時可直接排除）。",
@@ -390,8 +358,8 @@
     "features": [
       {
         "key": "annual_turnover",
-        "label": "公司營收（年）",
-        "aliases": ["公司營收", "ANNUAL_TURNOVER_AMT", "年營收"],
+        "label": "年營收",
+        "aliases": ["年營收", "annual_amt"],
         "weight": { "R": 0.125, "A": 0.0 },
         "edw_source": { "tables": ["AML_RISKREVIEW"], "field": "ANNUAL_TURNOVER_AMT" },
         "rule_text": "同欄位可為金額(台幣)或代碼00–09。金額分箱：≥300萬=1.0；100–<300萬=0.7；60–<100萬=0.4；<60萬=0.2。代碼分數：07/08/09=1.0；05/06=0.7；03/04=0.4；00/01/02=0.2。",
@@ -400,16 +368,9 @@
           "bins": [[3000000,1.0],[1000000,0.7],[600000,0.4],[0,0.2]],
           "currency": "TWD",
           "categorical_override": {
-            "00": 0.2, "0": 0.2,
-            "01": 0.2, "1": 0.2,
-            "02": 0.2, "2": 0.2,
-            "03": 0.4, "3": 0.4,
-            "04": 0.4, "4": 0.4,
-            "05": 0.7, "5": 0.7,
-            "06": 0.7, "6": 0.7,
-            "07": 1.0, "7": 1.0,
-            "08": 1.0, "8": 1.0,
-            "09": 1.0, "9": 1.0
+            "00": 0.2, "0": 0.2, "01": 0.2, "1": 0.2, "02": 0.2, "2": 0.2,
+            "03": 0.4, "3": 0.4, "04": 0.4, "4": 0.4, "05": 0.7, "5": 0.7,
+            "06": 0.7, "6": 0.7, "07": 1.0, "7": 1.0, "08": 1.0, "8": 1.0, "09": 1.0, "9": 1.0
           },
           "unknown_default": 0.2,
           "target": "R"
@@ -418,37 +379,27 @@
       {
         "key": "company_age",
         "label": "成立年限",
-        "aliases": ["成立年數", "ESTABLISHED_YEARS"],
+        "aliases": ["成立年限", "Established"],
         "weight": { "R": 0.125, "A": 0.0 },
         "edw_source": { "tables": ["AML_RISKREVIEW"], "field": "ESTABLISHED_YEARS" },
         "rule_text": "≥10年→1；5–9→0.6；3–4→0.3；<3→0。",
-        "score": {
-          "type": "numeric_step_ge",
-          "steps": [[10,1.0],[5,0.6],[3,0.3],[0,0.0]],
-          "target": "R",
-          "unit": "years"
-        }
+        "score": { "type": "numeric_step_ge", "steps": [[10,1.0],[5,0.6],[3,0.3],[0,0.0]], "target": "R", "unit": "years" }
       },
       {
         "key": "company_age",
-        "label": "成立年限",
-        "aliases": ["成立年數", "ESTABLISHED_YEARS"],
+        "label": "產業別",
+        "aliases": ["產業別", "Industry_Cd"],
         "weight": { "R": 0.125, "A": 0.0 },
         "edw_source": { "tables": ["AML_RISKREVIEW"], "field": "ESTABLISHED_YEARS" },
         "rule_text": "年數（year）：≥10=1.0；5≤year<10=0.6；3≤year<5=0.3；year<3=0.0。",
-        "score": {
-          "type": "numeric_step_ge",
-          "steps": [[10,1.0],[5,0.6],[3,0.3],[0,0.0]],
-          "target": "R",
-          "unit": "years"
-        }
+        "score": { "type": "numeric_step_ge", "steps": [[10,1.0],[5,0.6],[3,0.3],[0,0.0]], "target": "R", "unit": "years" }
       },
       {
         "key": "strategic_industry",
-        "label": "策略性產業別(ETL)",
-        "aliases": ["策略性產業別", "INDUSTRY_Cd", "INDUSTRY_CD_STRATEGIC"],
+        "label": "策略產業",
+        "aliases": ["策略產業", "Indusrty_R4_ETL"],
         "weight": { "R": 0.125, "A": 0.0 },
-        "edw_source": { "tables": ["PARTY_RISK_WEIGHT_D"], "field": "INDUSTRY_Cd" },
+        "edw_source": { "tables": ["PARTY_RISK_WEIGHT_D"], "field": "Indusrty_R4_ETL" },
         "rule_text": "屬於附件3所列策略性產業：Y=1；N=0；未知=0。",
         "score": {
           "type": "categorical_map",
@@ -459,10 +410,10 @@
       },
       {
         "key": "corp_credit_rating",
-        "label": "客戶等級/授信等級（1–12）",
-        "aliases": ["企業授信評等", "SCORE_CD", "授信等級"],
+        "label": "企業評等",
+        "aliases": ["企業評等", "Score_Cd"],
         "weight": { "R": 0.125, "A": 0.0 },
-        "edw_source": { "tables": ["PARTY_BK_APPL_CORP_CR_RATING"], "field": "SCORE_CD" },
+        "edw_source": { "tables": ["PARTY_BK_APPL_CORP_CR_RATING"], "field": "Score_Cd" },
         "rule_text": "授信等級（1–12，數字越小越佳）：[1–3]→1.0；[4–6]→0.6；[7–9]→0.2；[10–12]→0.0；未知→0.0。",
         "score": {
           "type": "numeric_ranges",
@@ -474,13 +425,9 @@
       {
         "key": "product_diversity_score",
         "label": "客戶往來業務類別",
-        "aliases": ["往來業務大類數", "SCSB_BUSINESS"],
+        "aliases": ["客戶往來業務類別", "cust_type_ETL"],
         "weight": { "R": 0.125, "A": 0.0 },
-        "edw_source": {
-          "tables": ["AML_RISKSCORE_NORMAL"],
-          "field": "SCSB_BUSINESS",
-          "extra_fields": { "count_field": "SCSB_BUSINESS_CNT" }
-        },
+        "edw_source": { "tables": ["AML_RISKSCORE_NORMAL"], "field": "cust_type_ETL", "extra_fields": { "count_field": "SCSB_BUSINESS_CNT" } },
         "rule_text": "來源可為『名稱清單』或『已計數欄位』。名稱清單以 ,、，/；; 空白 分隔，正規化/去重後，僅計入九大白名單：台幣存款、台幣授信、外幣存款、外幣授信、信用卡、信託/基金、保管箱、債券、保險。最終以類別數 N 評分：≥5=1.0；4=0.8；3=0.5；2=0.3；1=0.0。",
         "score": {
           "type": "business_multi",
@@ -489,10 +436,7 @@
           "delimiter_regex": "[,、，/；;\\s]+",
           "normalize_fullwidth": true,
           "dedupe": true,
-          "whitelist_labels": [
-            "台幣存款","台幣授信","外幣存款","外幣授信",
-            "信用卡","信託/基金","保管箱","債券","保險"
-          ],
+          "whitelist_labels": ["台幣存款","台幣授信","外幣存款","外幣授信","信用卡","信託/基金","保管箱","債券","保險"],
           "use_count_only": true,
           "steps_by_count": [[5,1.0],[4,0.8],[3,0.5],[2,0.3],[1,0.0]],
           "target": "R"
@@ -500,21 +444,14 @@
       },
       {
         "key": "avg_balance_6m",
-        "label": "月均存款（近6月平均）",
-        "aliases": ["近6月平均存款", "M6AVGBAL"],
+        "label": "月均存款分數",
+        "aliases": ["月均存款分數", "Acu_avg_m6_ETL"],
         "weight": 0,
         "edw_source": { "tables": ["AML_RISKSCORE_NORMAL"], "field": "M6AVGBAL" },
         "rule_text": "法人月均存款（近6月平均，TWD）：≥2億=1.0；8,000萬–<2億=0.8；3,000萬–<8,000萬=0.5；1,000萬–<3,000萬=0.3；300萬–<1,000萬=0.2；<300萬=0。",
         "score": {
           "type": "numeric_bins_amt",
-          "bins": [
-            [200000000, 1.0],
-            [80000000, 0.8],
-            [30000000, 0.5],
-            [10000000, 0.3],
-            [3000000, 0.2],
-            [0, 0.0]
-          ],
+          "bins": [[200000000, 1.0], [80000000, 0.8], [30000000, 0.5], [10000000, 0.3], [3000000, 0.2], [0, 0.0]],
           "target": "R",
           "currency": "TWD"
         }
@@ -522,7 +459,7 @@
       {
         "key": "avg_balance_qoq_change",
         "label": "與前季月均存款差額",
-        "aliases": ["活存餘額季變化（差額）", "M6AVGAMT", "月均存款QoQ差額"],
+        "aliases": ["與前季月均存款差額", "diff_M6_Avg_Amt"],
         "weight": { "R": 0.125, "A": 0.25 },
         "edw_source": { "tables": ["AML_RISKSCORE_NORMAL"], "field": "M6AVGAMT" },
         "rule_text": "上升→推薦；下降→關注（TWD）。推薦：≥2億=1.0；8,000萬–<2億=0.8；3,000萬–<8,000萬=0.5；1,000萬–<3,000萬=0.3；300萬–<1,000萬=0.2。關注：≤−2億=1.0；−8,000萬–>−2億=0.8；−3,000萬–>−8,000萬=0.5；−1,000萬–>−3,000萬=0.3；−300萬–>−1,000萬=0.2；0～−300萬=0。",
@@ -538,26 +475,42 @@
         }
       },
       {
-        "key": "fx_amount_change",
-        "label": "外匯實績變化（同比％）",
-        "aliases": ["FX_TURNOVER", "外匯實績變化率"],
-        "weight": 0,
-        "edw_source": { "tables": ["PMART_AML.AML_PARTY_TXN"], "field": "FX_TURNOVER" },
-        "rule_text": "以同比百分比變化評分：成長→推薦；衰退→關注。推薦：≥100%=1.0；50%–<100%=0.6；30%–<50%=0.3。關注：≤−60%=1.0；−60%~≤−40%=0.6；−40%~≤−20%=0.3。|Δ|不達門檻（成長<30% 或 衰退>-20%）不計分。",
+        "key": "days_since_last_txn",
+        "label": "最近一次交易距今天數",
+        "aliases": ["最近一次交易距今天數", "diff_txn_day"],
+        "weight": { "R": 0.0, "A": 0.166667 },
+        "edw_source": { "tables": ["AML_RISKRATINGCASE"], "field": "LAST_TXDATE" },
+        "rule_text": "d<90→0；90≤d<180→0.3；180≤d<270→0.5；270≤d<360→0.8；d≥360→1.0。",
         "score": {
-          "type": "numeric_bins_pct_diff",
-          "bins_up_pct": [[1.0, 1.0], [0.5, 0.6], [0.3, 0.3]],
-          "bins_down_pct": [[-0.6, 1.0], [-0.4, 0.6], [-0.2, 0.3]],
-          "no_score_below_up_pct": 0.3,
-          "no_score_below_down_pct": 0.2,
-          "target_up": "R",
-          "target_down": "A"
+          "type": "numeric_bins_days",
+          "ranges": [[0,90,0.0],[90,180,0.3],[180,270,0.5],[270,360,0.8],[360,null,1.0]],
+          "target": "A"
         }
       },
       {
+        "key": "fx_amount_change",
+        "label": "外匯實績",
+        "aliases": ["外匯實績", "turnover"],
+        "weight": 0,
+        "edw_source": { "tables": ["PMART_AML.AML_PARTY_TXN"], "field": "FX_TURNOVER" },
+        "rule_text": "計算 =（當年近3個月外匯實績合計 − 去年同期近3個月外匯實績合計）÷ 去年同期近3個月外匯實績合計。推薦分數：≥100%→1.0；50%–<100%→0.6；30%–<50%→0.4；10%–<30%→0.2；0%–<10%→0。關注分數：≤−70%→1.0；−70%–<−50%→0.6；−50%–<−30%→0.4；−30%–<−10%→0.2；0%–<−10%→0。",
+        "score": {
+          "type": "numeric_bins_pct_diff",
+          "bins_up_pct": [[1.0, 1.0], [0.5, 0.6], [0.3, 0.4], [0.1, 0.2]],
+          "bins_down_pct": [[-0.7, 1.0], [-0.5, 0.6], [-0.3, 0.4], [-0.1, 0.2]],
+          "up_zero_band_pct": 0.1,
+          "up_zero_score": 0.0,
+          "down_zero_band_pct": 0.1,
+          "down_zero_score": 0.0,
+          "target_up": "R",
+          "target_down": "A"
+        },
+        "calc": { "months": 3, "baseline": "yoy_same_period", "aggregate": "sum", "formula": "(curr_3m_sum - ly_3m_sum) / ly_3m_sum" }
+      },
+      {
         "key": "eb_cnt_1m",
-        "label": "數位互動次數(近1個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_1M", "近1月登入數"],
+        "label": "近1M登入次數",
+        "aliases": ["近1M登入次數", "L1M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI_CORP"], "field": "EB_LOGIN_CNT_1M" },
         "rule_text": "Δavg = 本月月均 − 上月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
@@ -574,8 +527,8 @@
       },
       {
         "key": "eb_cnt_3m",
-        "label": "數位互動次數(近3個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_3M", "近3月登入數"],
+        "label": "近3M登入次數",
+        "aliases": ["近3M登入次數", "L3M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI_CORP"], "field": "EB_LOGIN_CNT_3M" },
         "rule_text": "Δavg = 近3月月均 − 前3月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
@@ -592,8 +545,8 @@
       },
       {
         "key": "eb_cnt_6m",
-        "label": "數位互動次數(近6個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_6M", "近6月登入數"],
+        "label": "近6M登入次數",
+        "aliases": ["近6M登入次數", "L6M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI_CORP"], "field": "EB_LOGIN_CNT_6M" },
         "rule_text": "Δavg = 近6月月均 − 前6月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
@@ -610,8 +563,8 @@
       },
       {
         "key": "eb_cnt_ly1",
-        "label": "數位互動次數(去年同期1個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_LY1M", "去年同期1月登入數"],
+        "label": "去年同期 近1M登入次數",
+        "aliases": ["去年同期 近1M登入次數", "LY_L1M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI_CORP"], "field": "EB_LOGIN_CNT_LY1M" },
         "rule_text": "Δavg = 本月月均 − 去年同月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
@@ -628,8 +581,8 @@
       },
       {
         "key": "eb_cnt_ly3",
-        "label": "數位互動次數(去年同期3個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_LY3M", "去年同期3月登入數"],
+        "label": "去年同期 近3M登入次數",
+        "aliases": ["去年同期 近3M登入次數", "LY_L3M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI_CORP"], "field": "EB_LOGIN_CNT_LY3M" },
         "rule_text": "Δavg = 近3月月均 − 去年同期3月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
@@ -646,8 +599,8 @@
       },
       {
         "key": "eb_cnt_ly6",
-        "label": "數位互動次數(去年同期6個月, 月平均成長)",
-        "aliases": ["EB_LOGIN_CNT_LY6M", "去年同期6月登入數"],
+        "label": "去年同期 近6M登入次數",
+        "aliases": ["去年同期 近6M登入次數", "LY_L6M_Login_Cnt"],
         "weight": 0,
         "edw_source": { "tables": ["DM_DIGI_CORP"], "field": "EB_LOGIN_CNT_LY6M" },
         "rule_text": "Δavg = 近6月月均 − 去年同期6月月均。成長→R；衰退→A；|Δavg|<10 不計；若兩期月均皆 <10 次/月則不計。",
@@ -664,8 +617,8 @@
       },
       {
         "key": "edd_uncooperative",
-        "label": "不配合\\n盡職審查",
-        "aliases": ["不配合盡職審查", "UNCOOPERATIVE_FLAG"],
+        "label": "不配合盡職審查",
+        "aliases": ["不配合盡職審查", "New_RMK03_ETL"],
         "weight": { "R": 0.0, "A": 0.25 },
         "edw_source": { "tables": ["AML_RISKSCORE_NORMAL"], "field": "UNCOOPERATIVE_FLAG" },
         "rule_text": "Y=1；N=0（關注用；必要時可直接排除）。",
@@ -678,8 +631,8 @@
       },
       {
         "key": "txn_freq_delta_3m",
-        "label": "交易頻率差額（近6月月均 vs 去年同期6月月均）",
-        "aliases": ["M6AVGCNT", "交易頻率變化(半年)"],
+        "label": "交易頻率",
+        "aliases": ["交易頻率", "M6_Avg_Cnt_ETL"],
         "weight": 0,
         "edw_source": { "tables": ["AML_RISKSCORE_NORMAL"], "field": "M6AVGCNT" },
         "rule_text": "Δavg = (本期近6月『月平均』交易次數) − (去年同期6月『月平均』交易次數)。成長→R；衰退→A；|Δavg| < 10 不計分；若兩期月均皆 < 10 次/月則不計分。",
@@ -696,8 +649,8 @@
       },
       {
         "key": "loan_util_change_pp",
-        "label": "企金放款_額度動用率（基準期差值，pp）",
-        "aliases": ["企金放款_額度動用率","放款額度動用率變化","Loan Util Δpp","CF_Loan_Limit_Use_Rate Δpp"],
+        "label": "放款_額度動用率差值",
+        "aliases": ["放款_額度動用率差值","diff_ln_rate"],
         "weight": { "R": 0.125, "A": 0.25 },
         "edw_source": { "tables": ["PMART_REGT.KPI_CUST_CORP"], "field": "CF_Loan_Limit_Use_Rate" },
         "rule_text": "Δpp = 當期動用率 − 基準期動用率（百分點）。推薦：≥40→1.0；20–<40→0.8；10–<20→0.5；0–<10→0。關注：≤−40→1.0；−40–<−20→0.8；−20–<−10→0.5；−10–<0→0。額度大幅變更時略過；winsor 至 ±120pp。",
@@ -713,8 +666,8 @@
       },
       {
         "key": "credit_util_change_pp",
-        "label": "企金授信_額度動用率（基準期差值，pp）",
-        "aliases": ["企金授信_額度動用率","授信額度動用率變化","Credit Util Δpp","CF_Credit_Limit_Use_Rate Δpp"],
+        "label": "授信_額度動用率差值",
+        "aliases": ["授信_額度動用率差值","diff_cred_rate"],
         "weight": { "R": 0.125, "A": 0.25 },
         "edw_source": { "tables": ["PMART_REGT.KPI_CUST_CORP"], "field": "CF_Credit_Limit_Use_Rate" },
         "rule_text": "Δpp = 當期動用率 − 基準期動用率（百分點）。推薦：≥40→1.0；20–<40→0.8；10–<20→0.5；0–<10→0。關注：≤−40→1.0；−40–<−20→0.8；−20–<−10→0.5；−10–<0→0。額度大幅變更時略過；winsor 至 ±120pp。",
