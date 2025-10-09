@@ -39,7 +39,7 @@
       {
         "key": "job_title",
         "label": "AML職稱",
-        "aliases": [""AML職稱", "AML_Title_Cd"],
+        "aliases": ["AML職稱", "AML_Title_Cd"],
         "weight": { "R": 0.142857, "A": 0.0 },
         "edw_source": { "tables": ["AML_RISKRATINGCASE"], "field": "JOBTITLE1197" },
         "rule_text": "依 AML 職業代碼映射穩定性；未知給 0.5（中性）。",
