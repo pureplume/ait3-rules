@@ -1,3 +1,4 @@
+
 {
   "version": "edw-rules-v1.3",
   "updated_at": "2025-10-07T00:00:00",
@@ -456,11 +457,11 @@
         }
       },
       {
-        "key": "company_age",
+        "key": "industry_code",
         "label": "產業別",
         "aliases": ["產業別", "Industry_Cd"],
         "weight": { "R": 0.125, "A": 0.0 },
-        "edw_source": { "tables": ["AML_RISKREVIEW"], "field": "ESTABLISHED_YEARS" },
+        "edw_source": { "tables": ["AML_RISKREVIEW"], "field": "industry_code" },
         "rule_text": "年數（year）：≥10=1.0；5≤year<10=0.6；3≤year<5=0.3；year<3=0.0。",
         "score": {
           "type": "numeric_step_ge",
